@@ -1,0 +1,56 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+### Instalacion de paquetes
+```{r}
+# Instalacion
+install.packages("data.table") # Lectura dataset
+install.packages("tidyr") # Manipulacion de datos
+install.packages("e1071") # KNN
+install.packages("caret") # KNN
+install.packages("ggplot2") # Graficos
+install.packages("dplyr") # Manipulacion de datos
+install.packages("plyr") # Manipulacion de datos
+install.packages("class") # 
+install.packages("party") # Arboles de decisiones
+install.packages("randomForest") # Random forest
+install.packages("knitr") # 
+install.packages("clue") #
+install.packages("rbokeh") # Graficos
+install.packages("dygraphs") # Graficos
+install.packages("doParallel")
+install.packages("mlbench")
+install.packages("plotly")
+install.packages("rpart")
+install.packages("raprt.plot")
+install.packages("plotly")
+```
+
+# Librerias
+```{r}
+library(tidyr)
+library(dplyr)
+library(plyr)
+library(ggplot2)
+library(e1071)
+library(caret)
+library(tibble)
+library(class)
+library(party)
+library(randomForest)
+library(knitr)
+library(clue)
+library(rbokeh)
+library(dygraphs)
+library(mlbench)
+library(doParallel)
+library(rpart)
+library(rpart.plot)
+library(plotly)
+```
+
+
+
+
+

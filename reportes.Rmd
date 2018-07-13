@@ -1,0 +1,436 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+### REPORTES
+```{r}
+datautil$funded_amnt=as.numeric(datautil$funded_amnt)
+datautil$term=as.factor(datautil$term)
+datautil$int_rate=as.numeric(datautil$int_rate)
+datautil$installment=as.numeric(datautil$installment)
+datautil$grade=as.factor(datautil$grade)
+datautil$emp_title=as.factor(datautil$emp_title)
+datautil$emp_length=as.factor(datautil$emp_length)
+datautil$annual_inc=as.numeric(datautil$annual_inc)
+datautil$loan_status=as.factor(datautil$loan_status)
+datautil$tot_cur_bal=as.numeric(datautil$tot_cur_bal)
+datautil$num_actv_bc_tl=as.factor(datautil$num_actv_bc_tl)
+datautil$delinq_2yrs=as.numeric(datautil$delinq_2yrs)
+datautil$loan_amnt=as.factor(datautil$loan_amnt)
+
+datautil$verification_status=as.factor(datautil$verification_status)
+datautil$home_ownership=as.factor(datautil$home_ownership)
+datautil$purpose=as.factor(datautil$purpose)
+datautil$hardship_flag=as.factor(datautil$hardship_flag)
+datautil$debt_settlement_flag=as.factor(datautil$debt_settlement_flag)
+datautil$issue_d=as.factor(datautil$issue_d)
+```
+
+###1.El total del prestamo segun los meses a pagar
+```{r}
+c1<-datautil%>%group_by(term, grade)%>%summarise(monto_prestamo=sum(loan_amnt))
+c1
+```
+###2.Cantidad del monto solicitado por cada mes y grado segun el numero de anios de empleo
+```{r}
+c2<-datautil%>%group_by(emp_length,issue_d ,grade)%>%summarise(cantidad_monto=sum(loan_amnt))
+c2
+```
+
+
+###3.Cantidad Total de prestamo dados segun el proposito y numero de dias morosos igual a 8
+```{r}
+c3<-datautil%>%group_by(purpose,delinq_2yrs)%>%
+filter(delinq_2yrs==8)%>%  
+summarise(monto_prestamo=sum(loan_amnt))
+c3
+```
+
+###4.Cantidad prestada seg??n el grado de clasificacion y el estado de la vivienda
+```{r}
+c4<-datautil%>%group_by(home_ownership, grade)%>%summarise(cantidad_prestada=sum(funded_amnt))
+c4
+```
+
+###5. La tasa de interes del prestamo de los clientes verificados segun el estado del prestamo
+```{r}
+c5<-datautil%>%group_by(verification_status, loan_status)%>%summarise(tasa_interes=sum(int_rate))
+c5
+```
+
+###6. El incremento anual de los clientes que pagan en 36 o 60 meses y el proposito
+```{r}
+c6<-datautil%>%group_by(term, purpose)%>%summarise(incr_anual=sum(annual_inc))
+c6
+```
+
+###7. Saldo de todas las cuentas segun el mes indicando si es que esta trabajando o no un acuerdo de deuda  
+```{r}
+c7<-datautil%>%group_by(issue_d, debt_settlement_flag)%>%summarise(saldo_cuentas=sum(tot_cur_bal))
+c7
+```
+###8.El saldo de las cuentas segun los meses a pagar
+```{r}
+c8<-datautil%>%group_by(term, grade)%>%summarise(saldo_cuentas=sum(tot_cur_bal))
+c8
+```
+
+###9. La tasa de interes por cada mes segun el estado del prestamo y el numero de dias morosos 
+```{r}
+c9<-datautil%>%group_by(issue_d,delinq_2yrs, loan_status)%>%
+filter(issue_d=='Dec')%>%summarise(tasa_interes=sum(int_rate))
+c9
+```
+
+###10.La tasa de interes segun el numero de dias morosos y la cantidad de cuentas activas
+```{r}
+c10<-datautil%>%group_by(num_actv_bc_tl,delinq_2yrs)%>%summarise(tasa_interes=sum(int_rate))
+c10
+```
+
+###11.Total del pago mensual segun la tasa de ineteres por el grado y los meses de pago
+```{r}
+c11<-datautil%>%group_by(grade,term )%>%
+summarise(tasa_interes=sum(int_rate),pago_mensual=sum(installment))
+c11
+```
+
+### 12. Tasa de interes  segun el pago mensual por el proposito, el numero de meses y el grado C
+```{r}
+c12<-datautil%>%group_by(grade,term, purpose)%>%
+filter(grade=='C')%>%summarise(pago_mensual=sum(installment),tasa_interes=sum(int_rate))
+c12
+```
+
+###13. Cantidad Total de prestamo de los usuarios verificados por cada mes 
+```{r}
+c13<-datautil%>%group_by(issue_d, verification_status)%>%filter(verification_status=="Verified")%>%
+  summarise(monto_prestamo=sum(loan_amnt))
+c13
+```
+
+###14.Cantidad de personas con su tiempo en su empleo, en el mes de marzo
+```{r}
+c14<-datautil%>%group_by(issue_d,emp_length)%>%filter(issue_d=="mar")%>%summarise(n=n())
+c14
+```
+
+###15.El incremento anual segun el pago mensual de los clientes con morosidad de 14 dias en cada mes
+```{r}
+str(datautil$delinq_2yrs)
+c15<-datautil%>%group_by(delinq_2yrs,issue_d)%>%filter(delinq_2yrs==14)%>%
+  summarise(pago_mensual=sum(installment),incremento_anual=sum(annual_inc))
+c15
+```
+
+###16.Cantidad prestada segun los prestamos de tarjeto de credito en el mes de abril por el estado del prestamo
+```{r}
+c16<-datautil%>%group_by(issue_d,purpose,loan_status)%>%filter(issue_d=="Apr",purpose=="credit_card")%>%
+summarise(cantidad_prestada=sum(funded_amnt))
+c16
+```
+
+###17.Cantidad del prestamo segun tiempo de morosidad y si es que tiene una compañia de liquidacion de deudas
+```{r}
+c17<-datautil%>%group_by(delinq_2yrs,debt_settlement_flag)%>%summarise(cantidad_monto=sum(loan_amnt))
+c17
+```
+
+###18. El incremento anual de cada mes segun el estado del prestamo
+```{r}
+c18<-datautil%>% group_by(issue_d,verification_status)%>%summarise(incremento_anual=sum(annual_inc))
+c18
+```
+
+###19.Cantidad de saldo de cuentas de cada mes segun el estado del prestamo
+```{r}
+c19<-datautil%>%group_by(issue_d,verification_status)%>%summarise(saldo_cuentas=sum(tot_cur_bal))
+c19
+```
+
+###20.Cantidad pagos mensuales en cada mes segun el numero de cuentas igual a 5 de cada cliente
+```{r}
+c20<-datautil%>%group_by(issue_d,num_actv_bc_tl)%>%filter(num_actv_bc_tl==5)%>%summarise(pago_mensual=sum(installment))
+c20
+```
+
+###21.El pago mensual con la cantidad solitcitada de prestamo, segun el estado del prestamo e indicando si esta o no en un plan de dificultad
+```{r}
+c21<-datautil%>%group_by(loan_status, hardship_flag)%>%
+summarise(pago_mensual=sum(installment),cantidad_monto=sum(loan_amnt))
+c21
+```
+
+###22.La cantidad prestada con la tasa de interes de los clientes verificados o no, segun el grado
+```{r}
+c22<-datautil%>%group_by(verification_status, grade)%>%
+summarise(tasa_interes=sum(int_rate),cantidad_prestada=sum(funded_amnt))
+c22
+```
+
+###23 La cantidad prestada, segun el estado de vivienda y el numero de cuentas activas 
+```{r}
+c23<-datautil%>%group_by(num_actv_bc_tl, home_ownership)%>%summarise(cantidad_prestada=sum(funded_amnt))
+c23
+```
+
+###24.El pago mensual de los pagos corrientes y si es que cuentan con una financiera para su pago
+```{r}
+c24<-datautil%>%group_by(loan_status,debt_settlement_flag)%>%filter(loan_status=="Current")%>%
+summarise(cantidad_monto=sum(loan_amnt))
+c24
+```
+
+###25.El numero de cuentas activas y su saldo, con el incremento anual y los meses a pagar
+```{r}
+c25<-datautil%>%group_by(num_actv_bc_tl,term)%>%
+summarise(incremento_anual=sum(annual_inc),saldo_cuentas=sum(tot_cur_bal))
+c25
+```
+
+###26.El monto de prestamo de los empleados CEO y su estado de prestamo
+```{r}
+c26<-datautil%>%group_by(loan_status,emp_title)%>%filter(emp_title=="CEO")%>%
+summarise(cantidad_monto=sum(loan_amnt))
+c26
+```
+
+###27.Numero de cuentas activas y su saldo correspondiente por cada mes
+```{r}
+c27<-datautil%>%group_by(issue_d,num_actv_bc_tl)%>%summarise(saldo_cuentas=sum(tot_cur_bal))
+c27
+```
+
+###28.El incremento anual segun la cantidad de anios de trabajo y los meses a pagar 
+```{r}
+c28<-datautil%>%group_by(term,emp_length)%>%summarise(incremento_anual=sum(annual_inc))
+c28
+```
+
+###29. La cantidad prestada a los ingenieros de software con 3 años en su trabajo especificando su estado de prestamo
+```{r}
+c29<-datautil%>%group_by(emp_title,emp_length,loan_status)%>%
+filter(emp_title=="Software Engineer",emp_length==3)%>%
+summarise(cantidad_prestada=sum(funded_amnt))
+c29
+```
+
+###30.La cantidad prestada por cada mes
+```{r}
+c30<-datautil%>%group_by(issue_d)%>%summarise(cantidad_prestada=sum(funded_amnt))
+c30
+```
+
+
+#31.Reporte de todos los usuarios verificados
+```{r}
+c31<-datautil %>% dplyr::select(verification_status) %>% filter(verification_status=="Verified")
+c31
+```
+
+#32.Todos los usuarios que tienen su casa hipotecada
+```{r}
+c32<-datautil %>% dplyr::select(home_ownership) %>%filter(home_ownership == "MORTGAGE")
+c32
+```
+#33.Todos motivos de prestamos
+```{r}
+c33<-unique(datautil %>% distinct(purpose))
+c33
+```
+#34.El total de ratio por mes
+```{r}
+c34<-datautil %>% dplyr::group_by(home_ownership) %>% dplyr::summarise(suma=sum(installment))
+c34
+```
+#35.El monto maximo adquirido
+```{r}
+c35<-datautil %>% summarise(max_ingreso=max(funded_amnt))
+c35
+```
+
+#36.ingresos anuales entre 65000 y 75000
+```{r}
+c36<-datautil %>% dplyr::select(annual_inc) %>%filter(between(annual_inc,65000,75000))
+c36
+```
+
+#37.promedio del pago mensual por cada anio de trabajo
+```{r}
+c37<-datautil %>% group_by(emp_length) %>% 
+  dplyr:: summarise(promedio=mean(installment))
+c37
+```
+
+#38.Prestamos pagados en 36 o 60 meses en las diferentes fechas
+```{r}
+c38<-datautil%>% group_by(funded_amnt)%>%
+  dplyr::select(term)
+c38
+```
+
+#39.todos los tipos de estados de prestamos
+```{r}
+unique(datautil$loan_status)
+
+```
+
+#40.Incremento anual de los clientes segun el grado
+```{r}
+c40<-datautil%>%group_by(grade)%>%
+  dplyr::summarise(saldo_total=sum(annual_inc))
+c40
+```
+
+
+#41.El monto maximo que un empleado adquiere
+```{r}
+c41<-datautil %>% dplyr::select(emp_title)%>% 
+  summarise(montmax=max(datautil$int_rate))
+c41
+```
+
+
+#42. Personas con grado A de prÃ©stamos y con ingreso anual mayor a 10000
+```{r}
+c42<-datautil %>% dplyr::select(annual_inc, grade) %>% 
+filter(annual_inc>10000 & grade=="A")
+c42
+```
+
+
+#43.El ratio de un cliente con empleo entre 2 y 5 aÃ±os
+```{r}
+datautil$emp_length<- as.numeric(datautil$emp_length)
+c43<-datautil %>% dplyr::select(emp_length,int_rate) %>%
+  filter(between(emp_length,2,5))
+c43
+```
+
+#44. La media del saldo total de las cuentas, segun el estado de verificación
+```{r}
+c44<-datautil %>% group_by(verification_status,debt_settlement_flag )%>%
+  dplyr::summarise(media = median(tot_cur_bal))
+c44
+```
+
+#45. Los pagos que han sido totalmente pagados y que han sido verificados,segun el estado de la propiedad
+```{r}
+c45<-datautil %>% group_by(home_ownership) %>% 
+  filter(loan_status=="Fully Paid" & verification_status=="Verified") %>% 
+  dplyr::summarize(cantidad=n())
+c45
+```
+
+# 46. Los mejores 10 ingresos anuales del grado
+```{r}
+c46<-datautil %>% dplyr::select(grade,annual_inc) %>%
+  group_by(grade) %>% 
+  arrange(desc(annual_inc)) %>% top_n(10)
+c46
+```
+
+#47. Cantidad de ingenieros que solicitaron un prÃ©stamo durante el mes de Enero
+```{r}
+c47<-datautil%>% dplyr::select(emp_title,issue_d) %>%
+  filter(emp_title=="Engineer"&  stringr::str_detect(issue_d,"Jan"))%>%count()
+c47
+```
+
+#48. El importe promedio de personas con cuentas activas , por cada mes
+```{r}
+c48<-datautil%>%group_by(num_actv_bc_tl, issue_d)%>%
+  dplyr::summarise(ImportePromedio=mean(funded_amnt))
+c48
+```
+
+#49. Selecciona los montos actuales de las cuentas que estan en la posiciÃ³n 10 y 15
+```{r}
+c49<-datautil %>% dplyr::select(tot_cur_bal)%>%slice(10:15)
+c49
+```
+
+#50. Las 5 cuentas con mÃ¡s dinero 
+```{r}
+c50<-datautil %>% dplyr::select(annual_inc) %>% top_n(5)
+c50
+```
+
+#51. El maximo de incremento anual para prestamistas con 10 años de empelos y 
+#segun el mes
+```{r}
+c51<-datautil%>%group_by(emp_length,issue_d)%>%
+  filter(emp_length=="10")%>%
+  dplyr::summarise(maxi_incremento=max(annual_inc))
+c51
+```
+
+#52. Los prestamos que se hicieron por pago de tarjeta de crÃ©dito en el mes de Diciembre
+```{r}
+c52<-datautil%>% dplyr::select(purpose,issue_d)%>%
+  filter(purpose=="credit_card"& stringr::str_detect(issue_d,"Dec"))%>%
+  count()
+c52
+```
+
+#53. Promedio de la cantidad total prestamo segun el motivo
+```{r}
+c53<-datautil %>% group_by(purpose) %>% 
+  dplyr::summarise(promedio = mean(funded_amnt))
+c53
+```
+
+#54.Los prestamistas con vivienda rentada que pagarÃ¡n en 60 meses, con un empleo diferente a 10 aÃ±os
+```{r}
+c54<-datautil %>% dplyr::select(home_ownership,term,emp_length )%>%
+  filter(home_ownership=="RENT" & term =="60" & emp_length!=10)
+c54
+```
+
+#55. Cantidad de prÃ©stamos en abril
+```{r}
+c55<-datautil %>% dplyr::select(issue_d)%>%group_by(issue_d) %>%
+  filter(stringr::str_detect(issue_d, "Apr")) %>% dplyr::summarise(n=n())
+c55
+```
+
+#56. Personas que pidieron un prÃ©stamo, teniendo 4 aÃ±os de duraciÃ³n 
+#en su trabajo, con su respectivo incremento anual y ratio
+```{r}
+c56<-datautil%>%group_by(issue_d,emp_length,loan_status)%>%
+  filter(emp_length==4)%>%
+  dplyr:: summarise(incr_anual=sum(annual_inc),ratio=sum(int_rate))
+c56
+```
+
+#57. Mostrar todos los tipos de estado de propiedad
+```{r}
+c57<-unique(datautil %>%dplyr:: select(home_ownership))
+c57
+```
+
+#58. El total de ratio por mes
+```{r}
+c58<-datautil %>% dplyr::group_by(issue_d) %>% dplyr::summarise(sum(int_rate))
+c58
+```
+#59. El mÃ¡ximo de incremento anual para prestamistas grado B y segÃºn el mes
+```{r}
+c59<-datautil%>%group_by(grade,issue_d)%>%
+  filter(grade=="B")%>%
+  dplyr::summarise(maxi_incremento=max(annual_inc))
+c59
+```
+
+#60. Cantidad de total de prÃ©stamos y nÃºmero de prÃ©stamos que se dieron segÃºn el mes
+```{r}
+c60<-datautil%>%group_by(issue_d)%>%
+  dplyr::summarise(Prestaron = sum(ifelse(debt_settlement_flag == "Y", 1, 0)),total=n())
+c60
+```

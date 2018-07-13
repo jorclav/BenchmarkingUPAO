@@ -1,0 +1,100 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+### Benchmarking
+```{r}
+str(entrenamiento1)
+x <- colnames(entrenamiento1[colSums(is.na(entrenamiento1)) == 0])
+
+set.seed(20)
+index_train <- createDataPartition(y=entrenamiento1$verification_status, p=0.7, list=FALSE)
+data_train <- entrenamiento1[index_train,x]
+data_xval <- entrenamiento1[-index_train,x]
+dim(data_train); dim(data_xval)
+
+### entrenando los modelos
+
+str(data_xval)
+
+m1<-modelo
+
+m2<-arbol
+
+m3<-modelnaive
+
+m4<-RF
+
+m5<-model1
+
+m6<-GBMmodel
+
+
+
+#
+pred_svm <- predict(m1,data_xval)
+cm_svm <- confusionMatrix(pred_svm,data_xval$verification_status)
+#
+pred_arb <- predict(m2,data_xval, type = "class")
+cm_arb <- confusionMatrix(pred_arb,data_xval$verification_status)
+#
+pred_nb <- predict(m3,data_xval)
+cm_nb <- confusionMatrix(pred_nb,data_xval$verification_status)
+#
+pred_rf <- predict(m4,data_xval)
+cm_rf <- confusionMatrix(pred_rf,data_xval$verification_status)
+#
+pred_knn <- predict(m5,data_xval)
+cm_knn <- confusionMatrix(pred_knn,data_xval$verification_status)
+#
+pred_gb <- predict(m6,data_xval)
+cm_gb <- confusionMatrix(pred_gb,data_xval$verification_status)
+# Se define el accurracy para cada modelo
+Accuracy<- c(cm_svm$overall[1],cm_arb$overall[1],cm_nb$overall[1],cm_rf$overall[1],
+             cm_knn$overall[1],cm_gb$overall[1])
+# Se define el modelo de comparacion
+modelo_comparacion <- data.frame(Model = c('SVM','Arbol decisiones','Naive bayes','Random Forest','KNN', 'Gradient Boosted Machine'), Accuracy)   
+
+# Ordena los modelos de predicción de mayor a menor
+results<-arrange(modelo_comparacion,desc(Accuracy))
+str(modelo_comparacion$Model)
+```
+# Ploteo 1
+```{r}
+gbench1<-plot_ly(modelo_comparacion, x=~reorder(Model,-Accuracy), y= ~Accuracy, color = ~Model)%>%layout(title="Precision comparativa de los modelos de aprendizaje supervisado")
+gbench1
+
+```
+![imagen](/Users/alfredoche/Desktop/SHINYBARRAS.png)
+
+
+# Ploteo 2
+```{r}
+ggplot(aes(x=reorder(Model,-Accuracy), y=Accuracy, color=Modelos), data=modelo_comparacion) +
+        #geom_bar(stat="identity")+
+        geom_point()+
+        coord_polar(theta="y",direction=1)+        
+        labs(x="Modelos",y="Precisión de la predicción")+
+        ggtitle('Precisión comparativa de los modelos de datos de validación cruzada')
+```
+# Ploteo 3
+```{r}
+figure() %>%
+  ly_points(x=reorder(Model,-Accuracy), y=Accuracy, data = modelo_comparacion,
+    color = Modelos, glyph = Modelos,
+    hover = list(x=reorder(Model,-Accuracy), y=Accuracy))
+```
+![imagen](/Users/alfredoche/Desktop/bench1.png)
+
+# Tabla de resultados finales
+```{r}
+kable(results, caption = 'aaa')
+```
+
+
+
+
+
+
+

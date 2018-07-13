@@ -1,0 +1,20 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+### Lectura del Dataset 
+```{r}
+# Leer la data desde la ubicacion
+lc <- read.csv("/Users/alfredoche/Documents/Proyectos/proyecto/Datos/prestamo.csv", stringsAsFactors = F)
+
+# Seleccionar data util
+datautil <- dplyr::select(lc,funded_amnt, term, int_rate, installment, grade, emp_title, emp_length,verification_status, annual_inc, loan_status, tot_cur_bal, home_ownership, issue_d, purpose, hardship_flag, debt_settlement_flag,num_actv_bc_tl,loan_amnt,delinq_2yrs)
+```
+
+
+# Las primeras 10 filas
+```{r}
+head(datautil,10)
+```
+

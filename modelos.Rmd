@@ -1,0 +1,141 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Seleccionar data a utilizar en los modelos
+```{r}
+entrenamiento1<- dplyr::select(entrenamiento, verification_status, emp_length,int_rate,installment, annual_inc, num_actv_bc_tl,loan_amnt,delinq_2yrs)
+prueba1<- dplyr::select(prueba, verification_status, emp_length,int_rate,installment, annual_inc, num_actv_bc_tl,loan_amnt,delinq_2yrs)
+#
+entrenamiento1$verification_status<- as.factor(entrenamiento1$verification_status)
+entrenamiento1$emp_length<- as.numeric(entrenamiento1$emp_length)
+entrenamiento1$num_actv_bc_tl<- as.numeric(entrenamiento1$num_actv_bc_tl)
+entrenamiento1$loan_amnt<- as.numeric(entrenamiento1$loan_amnt)
+entrenamiento1$delinq_2yrs<- as.numeric(entrenamiento1$delinq_2yrs)
+#
+prueba1$verification_status<- as.factor(prueba1$verification_status)
+prueba1$emp_length<- as.numeric(prueba1$emp_length)
+prueba1$num_actv_bc_tl<- as.numeric(prueba1$num_actv_bc_tl)
+prueba1$loan_amnt<- as.numeric(prueba1$loan_amnt)
+prueba1$delinq_2yrs<- as.numeric(prueba1$delinq_2yrs)
+str(prueba1)
+```
+
+### SVM
+```{r}
+set.seed(20)
+# Preparando datos de entrenamiento (70%)
+ids.entrenamiento=createDataPartition(entrenamiento1$verification_status, p=0.7,list = FALSE)
+class(ids.entrenamiento)
+attach(entrenamiento1)
+str(entrenamiento1)
+##Aplicacion del modelo SVM
+#modelo<-svm(verification_status~., data = entrenamiento1[ids.entrenamiento,])
+
+#Prediccion
+predecir <- predict(modelo,prueba1[ids.entrenamiento,])
+#Matriz confusion
+tablasvm<-table(prueba1[ids.entrenamiento,"verification_status"], predecir, dnn = c("Actuales", "Predecidos"))
+
+# Accuracy
+precisionsvm<-sum(diag(tsvm))/sum(tsvm)
+#Graficando
+str(data)
+plot(modelo,data =entrenamiento1[ids.entrenamiento,],delinq_2yrs~int_rate)
+#validacion del modelo
+plot(modelo,data = entrenamiento1[-ids.entrenamiento,],delinq_2yrs~int_rate)
+confusionMatrix(tsvm)
+```
+
+### Arbol de Decisiones
+```{r}
+set.seed(20)
+# Creacion de arbol
+#arbol<-rpart(verification_status~.,data=entrenamiento1, method = 'class')
+# Grafico
+arbolgraf = rpart.plot(arbolrp) 
+# Calculo de prediccion
+pred <- predict(arbolrp,prueba1, type = "class")
+tablearbol = table(prarbol,prueba1$verification_status)
+# Accuracy
+preciarbol<-sum(diag(tablearbol))/sum(tablearbol)
+confusionMatrix(tablearbol)
+
+```
+
+
+
+###Naive Bayes
+```{r}
+set.seed(20)
+# Aplicacion de modelo Naive Bayes
+#modelnaive <- naiveBayes(entrenamiento1[-1], entrenamiento1$verification_status)
+# Prediccion
+prednaive <- predict(modelnaive, prueba1, type = "class")
+# Matriz de confusion
+tablaNaive <- table(prednaive, prueba1$verification_status, dnn=list('predicted','actual'))
+str(tablaNaive)
+# Accuracy
+precinaive<-sum(diag(tablaNaive))/sum(tablaNaive)
+confusionMatrix(tablaNaive)
+```
+### Random Forest
+```{r}
+set.seed(20)
+# Aplicamos Random Forest
+#RF <- randomForest(verification_status~.,data = entrenamiento1,ntree = 100,mtry = 3, nodesize=2 ,importance = TRUE)
+# Se comparra con la data de prueba1 para la prediccion
+pred <- predict(RF,prueba1, type = "class")
+tablerf = table(pred,prueba1$verification_status)
+
+# Grafico
+plot(RF)
+
+# Accuracy
+precirf<-sum(diag(tablerf))/sum(tablerf)
+confusionMatrix(tablerf)
+
+```
+### knn 
+```{r}
+set.seed(20)
+# Preparando datos de entrenamiento (70%)
+index = createDataPartition(entrenamiento1$verification_status, p = 0.7, list = F )
+train = entrenamiento1[index,]
+validation = entrenamiento1[-index,]
+# Modelo knn
+#model1 <- train(verification_status~. , data = train, method = "knn",
+#               preProcess = c("center","scale"))
+# Prediccion
+valid_pred <- predict.train (model1, validation, type = "raw")
+# Matriz de confusion
+tknn<-table(valid_pred, validation$verification_status)
+
+# Accuracy
+preciknn<-sum(diag(tknn))/sum(tknn)
+preciknn
+```
+
+
+### Gradient Boosted Machine
+```{r}
+# se divide la data
+set.seed(20)
+datanorm = createDataPartition(entrenamiento1$verification_status, p=0.7,list = FALSE)
+entrenamientokm<- entrenamiento1[datanorm,]
+pruebakm<- entrenamiento1[-datanorm,]
+# se crea el train control
+ctrl <- trainControl(method = "repeatedcv",number = 5, repeats = 2, allowParallel = T)
+# se crea el modelo gbm
+#GBMmodel <- train(verification_status~.,data = entrenamientokm,
+#                  method = "gbm", trControl = ctrl)
+# prediccion
+predgbm <- predict.train (GBMmodel, pruebakm, type = "raw")
+# matriz de confusion
+tgbm<-table(predgbm,pruebakm $verification_status)
+# Accuracy
+precigbm<-sum(diag(tgbm))/sum(tgbm)
+precigbm
+```
+

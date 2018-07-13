@@ -1,0 +1,73 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+### Lectura del Dataset 
+```{r}
+# Leer la data desde la ubicacion
+lc <- read.csv("/Users/alfredoche/Documents/Proyectos/proyecto/Datos/prestamo.csv", stringsAsFactors = F)
+
+# Seleccionar data util
+datautil <- dplyr::select(lc,funded_amnt, term, int_rate, installment, grade, emp_title, emp_length,verification_status, annual_inc, loan_status, tot_cur_bal, home_ownership, issue_d, purpose, hardship_flag, debt_settlement_flag,num_actv_bc_tl,loan_amnt,delinq_2yrs)
+```
+
+### Preprocesamiento de los datos
+```{r}
+str(datautil)
+# Normalizar la data 
+datautil$funded_amnt<-(datautil$funded_amnt - min(datautil$funded_amnt)) / (max(datautil$funded_amnt)-min(datautil$funded_amnt))
+datautil$annual_inc<-(datautil$annual_inc - min(datautil$annual_inc)) / (max(datautil$annual_inc)-min(datautil$annual_inc))
+datautil$tot_cur_bal<-(datautil$tot_cur_bal - min(datautil$tot_cur_bal)) / (max(datautil$tot_cur_bal)-min(datautil$tot_cur_bal))
+datautil$installment<-(datautil$installment - min(datautil$installment)) / (max(datautil$installment)-min(datautil$installment))
+# Separar la columna issue_d en solamente el mes
+datautil<- tidyr::separate(datautil, col = 13, into = c("issue_d","anio"),sep = "-")
+datautil=datautil[,-14]
+# Manipulacion de datos
+datautil$emp_length=gsub("< 1 year","1",datautil$emp_length)
+datautil$emp_length=gsub("1 year","1",datautil$emp_length)
+datautil$emp_length=gsub("2 years","2",datautil$emp_length)
+datautil$emp_length=gsub("3 years","3",datautil$emp_length)
+datautil$emp_length=gsub("4 years","4",datautil$emp_length)
+datautil$emp_length=gsub("5 years","5",datautil$emp_length)
+datautil$emp_length=gsub("6 years","6",datautil$emp_length)
+datautil$emp_length=gsub("7 years","7",datautil$emp_length)
+datautil$emp_length=gsub("8 years","8",datautil$emp_length)
+datautil$emp_length=gsub("9 years","9",datautil$emp_length)
+datautil$emp_length=plyr::revalue(datautil$emp_length, c("10+ years"="10"))
+str(unique(datautil$verification_status))
+datautil$verification_status=gsub("Source Verified","Verified",datautil$verification_status)
+# Cambiar valor a NA
+datautil$emp_length=plyr::revalue(datautil$emp_length, c("n/a"= NA))
+datautil$term <- as.numeric(substr(datautil$term, 1,3))
+# Convertir a decimal 
+datautil$int_rate <- as.numeric(gsub("%", "", datautil$int_rate)) / 100
+datautil<- na.omit(datautil)
+# Dividimos la data
+datautil <- data.frame(datautil)
+entrenamiento <- datautil[1:75000,] 
+prueba <- datautil[75001:150000,] 
+```
+###aaaa
+```{r}
+datautil$funded_amnt=as.numeric(datautil$funded_amnt)
+datautil$term=as.factor(datautil$term)
+datautil$int_rate=as.numeric(datautil$int_rate)
+datautil$installment=as.numeric(datautil$installment)
+datautil$grade=as.factor(datautil$grade)
+datautil$emp_title=as.factor(datautil$emp_title)
+datautil$emp_length=as.factor(datautil$emp_length)
+datautil$annual_inc=as.numeric(datautil$annual_inc)
+datautil$loan_status=as.factor(datautil$loan_status)
+datautil$tot_cur_bal=as.numeric(datautil$tot_cur_bal)
+datautil$num_actv_bc_tl=as.factor(datautil$num_actv_bc_tl)
+datautil$delinq_2yrs=as.factor(datautil$delinq_2yrs)
+datautil$loan_amnt=as.numeric(datautil$loan_amnt)
+datautil$verification_status=as.factor(datautil$verification_status)
+datautil$home_ownership=as.factor(datautil$home_ownership)
+datautil$purpose=as.factor(datautil$purpose)
+datautil$hardship_flag=as.factor(datautil$hardship_flag)
+datautil$debt_settlement_flag=as.factor(datautil$debt_settlement_flag)
+datautil$issue_d=as.factor(datautil$issue_d)
+```
+

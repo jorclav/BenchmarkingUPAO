@@ -1,0 +1,397 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+### GRAFICOS
+
+##Carga de Paquetes
+```{r}
+library(plotly)
+library(ggplot2)
+```
+
+#Graficos
+
+###31.Grafico de la consulta numero 1
+```{r}
+p1<-plot_ly(c1, x=~term,y=~monto_prestamo, type = "bar",color =~term)%>%layout(title = "El total del prestamo segun los meses a pagar")
+p1
+```
+###32.Grafico de la consulta numero 2
+```{r}
+g2<-ggplot(c2, aes(x=issue_d, y=cantidad_monto, colour=emp_length))+geom_jitter(aes())
+p2<-ggplotly(g2)
+p2
+```
+###33.Grafico de las consulta numero 3
+```{r}
+p3<-plot_ly(c3, x=~delinq_2yrs,y=~monto_prestamo, type = "bar", color =~purpose )%>%layout(title = "Cantidad Total de prestamo dados segun el proposito y numero de dias morosos igual a 8")
+p3
+```
+
+
+###34.Grafico de la consulta numero 4
+```{r}
+g4<-ggplot(c4, aes(x=home_ownership, y=cantidad_prestada, colour=grade))+geom_jitter()
+p4<-ggplotly(g4)
+p4
+```
+
+###35.Grafico de la consulta numero 5
+```{r}
+g5<-ggplot(c5, aes(x=loan_status, y=tasa_interes, colour=verification_status))+geom_point()
+p5<-ggplotly(g5)
+p5
+```
+
+###36.Grafico de la consulta numero 6
+```{r}
+g6<-ggplot(c6, aes(x=purpose, y=incr_anual, colour=term))+geom_bar(stat = "identity")
+p6<-ggplotly(g6)
+p6
+```
+
+###37.Grafico de la consulta numero 7
+```{r}
+g7<-ggplot(c7, aes(x=issue_d, y=saldo_cuentas, colour=debt_settlement_flag))+geom_bar(stat = "identity")
+
+p7<-ggplotly(g7)
+p7
+```
+###32.Grafico de la consulta numero 8
+```{r}
+p8<-plot_ly(c8, x=~term,y=~saldo_cuentas, type = "bar",color =~term)%>%layout(title = "El total del prestamo segun los meses a pagar")
+p8
+```
+###39.Grafico de la consulta numero 9
+```{r}
+g9<-ggplot(c9, aes(x=issue_d, y=tasa_interes, colour=delinq_2yrs))+geom_jitter()
+p9<-ggplotly(g9)
+p9
+```
+
+###40.Grafico de la consulta numero 10
+```{r}
+g10<-ggplot(c10, aes(x=delinq_2yrs, y=tasa_interes, colour=num_actv_bc_tl))+geom_point()
+p10<-ggplotly(g10)
+p10
+```
+
+###41.Grafico de la consulta numero 11
+```{r}
+g11<-ggplot(c11, aes(x=pago_mensual, y=tasa_interes, colour=grade))+geom_point()
+p11<-ggplotly(g11)
+p11
+```
+
+###42.Grafico de la consulta numero 12
+```{r}
+g12<-ggplot(c12, aes(x=tasa_interes, y=pago_mensual, colour=term))+geom_point()
+p12<-ggplotly(g12)
+p12
+```
+
+###43.Grafico de la consulta numero 13
+```{r}
+g13<-ggplot(c13, aes(x=verification_status, y=monto_prestamo, colour=issue_d ))+geom_jitter()
+
+p13<-ggplotly(g13)
+p13
+```
+
+###44.Grafico de la consulta numero 14
+```{r}
+g14<-ggplot(c14, aes(x=emp_length, y=n))+geom_bar(stat = "identity")
+p14<-ggplotly(g14)
+p14
+```
+
+###45.Grafico de la consulta numero 15
+```{r}
+g15<-ggplot(c15, aes(x=pago_mensual, y=incremento_anual, colour= issue_d))+geom_bar(stat = "Identity")
+p15<-ggplotly(g15)
+p15
+```
+
+###46.Grafico de la consulta numero 16
+```{r}
+p16<-plot_ly(c16, x=~loan_status,y=~cantidad_prestada)%>%
+add_lines(name = ~"purpose")%>%layout(title = "Cantidad prestada segun los prestamos de tarjeto de credito en el mes de abril por el estado del prestamo")
+p16
+```
+
+###47.Grafico de la consulta numero 17
+```{r}
+p17<-plot_ly(c17, x=~delinq_2yrs,y=~cantidad_monto, color = ~debt_settlement_flag)%>%
+layout(title = "Cantidad del prestamo segun tiempo de morosidad y si es que tiene una compania de liquidacion de deudas")
+p17
+```
+
+###48.Grafico de la consulta numero 18
+```{r}
+p18<-plot_ly(c18, x=~issue_d,y=~incremento_anual, color = ~verification_status, type = "histogram")%>%layout(title = "El incremento anual de cada mes segun el estado del prestamo")
+p18
+```
+
+###49.Grafico de la cconsulta numero 19
+```{r}
+p19<-plot_ly(c19, x=~issue_d,y=~saldo_cuentas, color = ~verification_status, type = "histogram")%>%layout(title = "Cantidad de saldo de cuentas de cada mes segun el estado del prestamo")
+p19
+```
+
+###50.Grafico de la consulta numero 20
+```{r}
+p20<-plot_ly(c20, x=~num_actv_bc_tl,y=~pago_mensual, type = "bar", color =~issue_d )%>%layout(title = "Cantidad pagos mensuales en cada mes segun el numero de cuentas igual a 5 de cada cliente")
+p20 
+```
+
+###51.Grafico de la consulta numero 21
+```{r}
+p21<-plot_ly(c21, x = ~loan_status, y = ~cantidad_monto,color = ~hardship_flag, name = 'cantidad_monto', type = 'bar') %>%add_trace(y = ~pago_mensual, name = 'pago_mensual', type = 'bar')
+p21
+```
+
+###52.Grafico de la consulta numero 22
+```{r}
+p22<-plot_ly(c22, x = ~verification_status, y = ~tasa_interes,color = ~grade, name = 'tasa_interes', type = 'bar') %>%add_trace(y = ~cantidad_prestada, name = 'cantidad_prestada', type = 'bar')
+p22
+```
+
+###53.Grafico de la consulta numero 23
+```{r}
+p23<-plot_ly(c23,x=~num_actv_bc_tl,y=~cantidad_prestada,color = ~home_ownership, type = 'scatter',mode = 'markers')%>%layout(title = "La cantidad prestada, segun el estado de vivienda y el numero de cuentas activas")
+p23
+```
+
+###54.Grafico de la consulta numero 24
+```{r}
+p24<-plot_ly(c24,x=~loan_status,y=~cantidad_monto,color = ~debt_settlement_flag, type = 'scatter',mode = 'markers')%>%layout(title = "El pago mensual de los pagos corrientes y si es que cuentan con una financiera para su pago")
+p24
+```
+
+###55.Grafico de la consulta numero 25
+```{r}
+p25<-plot_ly(c25, x = ~num_actv_bc_tl, y = ~incremento_anual,color = ~term, name = 'incremento_anual', type = 'bar') %>%add_trace(y = ~saldo_cuentas, name = 'saldo_cuentas',type='bar')
+p25
+```
+
+###56.Grafico de la consulta numero 26
+```{r}
+p26<-plot_ly(c26, x=~emp_title,y=~cantidad_monto, type = "bar", color =~loan_status )%>%layout(title = "El monto de prestamo de los empleados CEO y su estado de prestamo")
+p26
+```
+
+###57.Grafico de la consulta numero 27
+```{r}
+p27<-plot_ly(c27, x = ~num_actv_bc_tl, y = ~saldo_cuentas,color = ~issue_d, colors = "Set1",type = 'scatter',
+  mode = 'markers')
+p27
+```
+
+###58.Grafico de la consulta numero  28
+```{r}
+p28<-plot_ly(c28, x = ~emp_length, y = ~incremento_anual,color = ~term, colors = "Set1",type = 'scatter',
+  mode = 'markers')
+p28
+```
+
+###59.Grafico de la consulta numero 29
+```{r}
+p29<-plot_ly(c29, x = ~mes, y = ~ganancia_total,split = ~anio,color = ~campania, name = 'ganancia_total', type = 'bar')%>%layout(title = "Ganancia total en la campa??a solo de charol en cada a??o")
+#
+p29<-plot_ly(c29, x=~emp_title,y=~cantidad_prestada, type = "bar", color =~loan_status )%>%
+layout(title = "La cantidad prestada a los ingenieros de software con 3 anios en su trabajo especificando su estado de prestamo")
+p29
+```
+
+###60. Grafico de la consulgta numero 30
+```{r}
+p30<-plot_ly(c30, x = ~issue_d, y = ~cantidad_prestada,name = 'inversion_total', colors = "Set1",type = 'scatter',
+  mode = 'line')
+p30
+```
+
+
+
+
+
+#El total de ratio por mes
+```{r}
+#c4<-datautil %>% dplyr::group_by(home_ownership) %>% dplyr::summarise(suma=sum(installment))
+gc4<-ggplot(c34, aes(x=home_ownership, y=suma))+geom_point()
+ggc4<-ggplotly(gc4)
+gc4
+```
+#7. promedio del pago mensual por cada aÃ±o de trabajo
+```{r}
+#c7<-datautil %>% group_by(emp_length) %>% 
+#  dplyr:: summarise(promedio=mean(installment))
+gc7<-ggplot(c37, aes(x=emp_length, y=promedio))+geom_point()
+ggc7<-ggplotly(gc7)
+gc7
+```
+#10. Incremento anual de los clientes segun el grado
+```{r}
+#c10<-datautil%>%group_by(grade)%>%
+#  dplyr::summarise(saldo_total=sum(annual_inc))
+#diez<- c10[-1,]
+gc10<-ggplot(c40, aes(x=grade, y=saldo_total))+geom_bar(stat = "identity")
+gc10
+```
+#12. Personas con grado A de prÃ©stamos y con ingreso anual mayor a 10000
+```{r}
+c12<-datautil %>% dplyr::select(annual_inc, grade) %>% 
+filter(annual_inc>10000 & grade=="A")
+#c12<-datautil %>% dplyr::group_by(loan_status) %>% dplyr::summarise(sum(installment))
+gc12<-ggplot(c42, aes(x=grade, y=annual_inc))+geom_point()
+gc12
+```
+#13.El ratio de un cliente con empleo entre 2 y 5 aÃ±os
+```{r}
+#c13<-datautil %>% dplyr::select(emp_length,int_rate) %>%
+#filter(between(emp_length,2,5))
+gc13<-ggplot(c43, aes(x=emp_length, y=int_rate))+geom_bar(stat = "identity")
+gc13
+```
+#14. La media del saldo total de las cuentas, segun el estado de verificación 
+```{r}
+#c14<-datautil %>% group_by(verification_status,debt_settlement_flag )%>%
+#  dplyr::summarise(media = median(tot_cur_bal))
+gc14<-ggplot(c44, aes(x=verification_status, y=media, colour=debt_settlement_flag))+geom_point()
+ggplotly(ggplot(c44, aes(x=verification_status, y=media, colour=debt_settlement_flag))+geom_point())
+ggc14<-ggplotly(gc14)
+gc14
+```
+#15. Los pagos que han sido totalmente pagados y que han sido verificados,segÃºn el estado de la propiedad
+```{r}
+#c15<-datautil %>% group_by(home_ownership) %>% 
+#  filter(loan_status=="Fully Paid" & verification_status=="Verified") %>% 
+#  dplyr::summarize(cantidad=n())
+gc15<-ggplot(c45, aes(x=home_ownership, y=cantidad))+geom_jitter()
+ggc15<-ggplotly(gc15)
+gc15
+```
+# 16. Los mejores 10 ingresos anuales del grado 
+```{r}
+#c16<-datautil %>% dplyr::select(grade,annual_inc) %>%
+#  group_by(grade) %>% 
+#  arrange(desc(annual_inc)) %>% top_n(10)
+gc16<-ggplot(c46, aes(x=grade, y=annual_inc))+geom_bar(stat = "identity")
+gc16
+```
+#18. El importe promedio de personas con cuentas activas , por cada mes
+```{r}
+
+gc18<-ggplot(c48, aes(x=num_actv_bc_tl, y=ImportePromedio, color=issue_d ))+geom_point()
+ggc18<-ggplotly(ggplot(418, aes(x=num_actv_bc_tl, y=ImportePromedio, color=issue_d ))+geom_point())
+gc18
+```
+#23. Promedio de la cantidad total prestamo segun el motivo
+```{r}
+gc23<-ggplot(c53, aes(x=purpose, y=promedio))+geom_bar(stat = "identity")
+gc23
+```
+#26. Personas que pidieron un prÃ©stamo, teniendo 4 aÃ±os de duraciÃ³n en su trabajo, con su respectivo incremento anual y ratio
+```{r}
+
+
+gc26<-ggplot(c56, aes(x=incr_anual, y=ratio))+geom_jitter()
+ggc26<-ggplotly(gc26)
+gc26
+```
+#28. El total de ratio por mes
+```{r}
+gc28<-ggplot(c58, aes(x=issue_d, y=suma))+geom_point()
+ggc28<-ggplotly(gc28)
+gc28
+```
+#59. El mÃ¡ximo de incremento anual para prestamistas grado B y segÃºn el mes
+```{r}
+
+gc29<-ggplot(c59, aes(x=grade, y=maxi_incremento, color= issue_d))+geom_jitter()
+ggc29<-ggplotly(gc29)
+gc29
+```
+
+#60.Cantidad de total de prÃ©stamos y nÃºmero de prÃ©stamos que se dieron segÃºn el mes
+```{r}
+
+gc30<-ggplot(c60, aes(x=issue_d, y=Prestaron))+geom_jitter()
+ggc30<-ggplotly(gc30)
+gc30
+```
+# Las personas con viviendas que estÃ¡n o no en un plan de dificultades financieras
+```{r}
+qplot(x=datautil$home_ownership, y =datautil$hardship_flag ,colour=I("green"),xlab="Tipo de vivienda",ylab="Dificultad")
+```
+# GrÃ¡fico del pago mensual con respecto a cada grado
+```{r}
+ggplot(datautil, aes(x=grade, y=installment))+geom_bar(stat = "identity")
+```
+# Grafico de nÃºmero de pagos y la cantidad a pagar
+```{r}
+ggplot(datautil, aes(x=term, y=funded_amnt))+geom_bar(stat = "identity")
+labs(y="Cantidad total prestamo",x="Numero de pagos")
+```
+# Grafico del saldo total de las cuentas, segun los meses a pagar
+```{r}
+b<-ggplot(datautil, aes(x=issue_d, y=tot_cur_bal, color= term))+geom_bar(stat = "identity")
+ggplotly(b)
+b
+```
+# Grafico de clientes verificados o no verificados segÃºn el 
+#monto de prestamo y si cuenta con una financiera aparte
+```{r}
+ggplot(datautil, aes(x=verification_status, y=funded_amnt, color= debt_settlement_flag))+geom_bar(stat = "identity")
+```
+# Grafico de aÃ±os de trabajo de una persona por la tasa 
+#de interes, especificando el grado al que pertenece
+```{r}
+ggplot(datautil, aes(x=emp_length, y=int_rate, color= grade))+geom_bar(stat = "identity")
+```
+## Grafico de saldo de cuentas por cada mes y el nÃºmero de pagos a realizar
+```{r}
+ggplot(datautil, aes(x=tot_cur_bal, y=issue_d, color= term))+geom_line()
+```
+# Grafico de la cantidad total del prestamos por grado
+```{r}
+ggplot(datautil, aes(x=grade, y=funded_amnt))+geom_bar(stat = "identity")
+```
+# Grafico del motivo del prestamo por el monto en cada mes
+```{r}
+ggplot(datautil, aes(x=purpose, y=funded_amnt, color= issue_d))+geom_bar(stat = "identity")
+```
+# Grafico del monto prestado y su estado clasificado por grados
+```{r}
+ggplot(datautil, aes(x=loan_status, y=funded_amnt, color= grade))+geom_bar(stat = "identity")
+```
+# Grafico del ratio por cada numero de cuentas activas, indicando los aÃ±os de trabajo de cada prestatario
+```{r}
+a<-ggplot(datautil, aes(x=num_actv_bc_tl, y=int_rate, color= emp_length))+geom_bar(stat = "identity")
+ggplotly(a)
+a
+```
+# Histograma del ratio
+```{r}
+hist(datautil$int_rate, main = "Histograma de la tasa de interes", xlab = "Ratio (%)")
+```
+# Histograma del prestamo dado al cliente
+```{r}
+hist(datautil$funded_amnt, main = "Histograma del total del prestamo", xlab = "Total")
+```
+# Histograma de los pagos a realizar 
+```{r}
+hist(datautil$installment, main = "Histograma del pago mensual", xlab = "Cuotas")
+```
+# Histograma del ingreso anual de los prestatarios
+```{r}
+hist(datautil$annual_inc, main = "Histograma del ingreso anual", xlab = "Ingreso")
+```
+# Histograma del saldo actual de las cuentas de los prestatarios
+```{r}
+hist(datautil$tot_cur_bal, main = "Histograma saldo total", xlab = "Saldo")
+save.image("graficos.RData")
+```
+
+
